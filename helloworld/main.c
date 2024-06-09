@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
-//https://github.com/lizrice/learning-ebpf
+#include <assert.h>
+
+// https://github.com/lizrice/learning-ebpf
+// https://github.com/libbpf/libbpf
 
 int
 bpf_hello_world(void)
@@ -16,17 +19,9 @@ run_cmd(const char* cmd, char* const args[])
 }
 
 int
-hello(char* msg)
-{
-    printf("Hello, %s!\n", msg);
-    return 0;
-}
-
-int
 main(int argc, char* argv[])
 {
     int r = 0;
-    hello("world");
     bpf_hello_world();
     char* const args[] = {"strace","-c","cal", NULL};
     if (r = run_cmd(args[0], args) < 0) 
