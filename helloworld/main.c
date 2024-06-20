@@ -1,36 +1,34 @@
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
+//#include <unistd.h>
 #include <assert.h>
+//#include <linux/bpf.h>
+#include <sys/resource.h>
 
-// https://github.com/lizrice/learning-ebpf
-// https://github.com/libbpf/libbpf
+#include "main.skel.h"
 
-int
-bpf_hello_world(void)
+static void bump_memlock_rlimit(void)
 {
-    printf("Hello, BPF World!\n");
-    return 0;
-}
-
-int
-run_cmd(const char* cmd, char* const args[])
-{
-    return execvp(cmd, args);
-}
-
-int
-main(int argc, char* argv[])
-{
-    int r = 0;
-    bpf_hello_world();
-    char* const args[] = {"strace","-c","cal", NULL};
-    if (r = run_cmd(args[0], args) < 0) 
+    struct rlimit rlim = {
+        .rlim_cur = RLIM_INFINITY,
+        .rlim_max = RLIM_INFINITY,
+    };
+    if (setrlimit(RLIMIT_MEMLOCK, &rlim))
     {
-        perror("execvp");
-        return r;
+        fprintf(stderr, "Failed to increase rlimit: %m\n");
+        exit(1);
     }
-    //char* const as[] = {"ps", "-al", NULL};
-    //execve("/bin/ls", as, NULL);
+}
 
+int
+main(void)
+{
+    bump_memlock_rlimit();
+    struct main *skel = main__open();
+    main__load(skel);
+    main__attach(skel);
+
+    for (;;) {
+    }
     return 0;
 }
