@@ -17,7 +17,7 @@ struct {
 	__uint(max_entries, 256 * 1024);
 } rb SEC(".maps");
 
-const volatile unsigned long long min_duration_ns = 0;
+const volatile unsigned long long min_duration_ns = 100000;
 
 SEC("tp/sched/sched_process_exec")
 int

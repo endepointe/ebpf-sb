@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <bpf/libbpf.h>
 #include <sys/resource.h>
-#include "main.skel.h"
 #include "main.h"
+#include "main.skel.h"
 
 static volatile bool exiting = false;
 
