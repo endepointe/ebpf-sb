@@ -20,7 +20,11 @@ skel: bpf
 
 .PHONY: clean
 clean:
-	rm -f $(APP) main.bpf.o main.skel.h #vmlinux.h
+	rm -f $(APP) main.bpf.o main.skel.h
+
+clean-all: clean
+	rm -f $(APP) main.bpf.o main.skel.h vmlinux.h
+
 
 .PHONY: gdb
 gdb: bpf
