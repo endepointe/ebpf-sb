@@ -20,6 +20,19 @@ static struct env {
 	long min_duration_ms;
 } env;
 
+static void bump_memlock_rlimit(void)
+{
+	struct rlimit rlim_new = {
+		.rlim_cur	= RLIM_INFINITY,
+		.rlim_max	= RLIM_INFINITY,
+	};
+
+	if (setrlimit(RLIMIT_MEMLOCK, &rlim_new)) {
+		fprintf(stderr, "Failed to increase RLIMIT_MEMLOCK limit!\n");
+		exit(1);
+	}
+}
+
 static int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args)
 {
 	if (level == LIBBPF_DEBUG && !env.verbose)
@@ -55,11 +68,10 @@ main(void)
     int err;
     struct ring_buffer *rb = NULL;
 
-    libbpf_set_print(libbpf_print_fn);
+    //libbpf_set_print(libbpf_print_fn);
 
     signal(SIGINT, sig_handler);
     signal(SIGTERM, sig_handler);
-
 
     struct main *skel = main__open();
 
@@ -68,8 +80,6 @@ main(void)
         fprintf(stderr, "Failed to open and load BPF skeleton\n");
         return 1;
     }
-
-    //skel->rodata_str1_1->min_duration_ns = 1000000;
 
     err = main__load(skel);
     if (err)
@@ -95,13 +105,12 @@ main(void)
         goto cleanup;
     }
 
-	/* Process events */
 	printf("%-8s %-5s %-16s %-7s %-7s %s\n", "TIME", "EVENT", "COMM", "PID", "PPID",
 	       "FILENAME/EXIT CODE");
 
     while (!exiting)
     {
-        err = ring_buffer__poll(rb, 100 /* timeout, ms */);
+        err = ring_buffer__poll(rb, 100); // 100ms
         printf("ring_buffer__poll: %d\n", err);
         if (err == -EINTR)
         {
