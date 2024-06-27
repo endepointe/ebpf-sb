@@ -24,3 +24,6 @@ links 'https://docs.kernel.org/bpf/libbpf/libbpf_overview.html'
 
 #bpftrace
 #https://github.com/bpftrace/bpftrace/tree/master
+
+#ebpf for windows
+#https://microsoft.github.io/ebpf-for-windows/
