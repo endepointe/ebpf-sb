@@ -27,3 +27,7 @@ links 'https://docs.kernel.org/bpf/libbpf/libbpf_overview.html'
 
 #ebpf for windows
 #https://microsoft.github.io/ebpf-for-windows/
+#https://github.com/microsoft/ebpf-for-windows#architectural-overview
+
+
+
